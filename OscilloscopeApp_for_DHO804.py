@@ -15,6 +15,7 @@ from tkinter import Tk,filedialog
 from pandas import DataFrame
 from os import path
 from gc import collect
+from re import compile
 
 #采用from ... import ... 方式,可减小exe的大小
 
@@ -594,7 +595,8 @@ class OscilloscopeApp(QMainWindow):
             if devices:
                 result = inputdialog.exec()
                 device_address = inputdialog.get_selected_device()
-                if result == QDialog.DialogCode.Accepted and device_address != 'TEST(模拟模式,纯看界面)':
+                pattern = compile(r'^USB\d+::0x[0-9A-Fa-f]{4}::0x[0-9A-Fa-f]{4}::DHO9[A-Z0-9]+::INSTR$')
+                if result == QDialog.DialogCode.Accepted and pattern.fullmatch(device_address) is not None:
                     self.connect_to_oscilloscope(device_address)
                 elif result == QDialog.DialogCode.Accepted and device_address == 'TEST(模拟模式,纯看界面)':
                     self.simulate = True
