@@ -459,31 +459,31 @@ class OscilloscopeApp(QMainWindow):
     def update_stylesheets(self):#根据窗口大小更新UI字体大小
         scale_w = min(float(self.width() / self.original_width),1.65)
         scale_h = min(float(self.height() / self.original_height),1.60)
-        font_size_scale = min(scale_w,scale_h)
+        self.font_size_scale = min(scale_w,scale_h)
 
-        self.channel_label.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
-        self.coupling_label.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
-        self.pts_label.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
-        self._20M_label.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
-        self.time_scale_label.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
-        self.voltage_scale_label.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
-        self.closed_label.setStyleSheet(f"font-size: {int(30 * font_size_scale)}px;")
-        self.save_button.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
-        self.Auto_button.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
-        self.run_stop_button.setStyleSheet(f"QPushButton {{background-color: green; font-size: {int(20 * font_size_scale)}px;}}")
-        self.filter_button.setStyleSheet(f"QPushButton {{background-color: red; font-size: {int(20 * font_size_scale)}px;}}")
-        self.fft_button.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
-        self.channel_selector.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
-        self.close_channel_button.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
-        self.open_channel_button.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
-        self.coupling_selector.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
-        self.pts_selector.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
-        self.toggle_button.setStyleSheet(f"QPushButton {{font-size: {int(20 * font_size_scale)}px; background-color: red;}}")
-        self.time_scale_selector.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
-        self.voltage_scale_selector.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
-        self.vpp_label.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
-        self.frequency_label.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
-        self.Quit_button.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
+        self.channel_label.setStyleSheet(f"font-size: {int(20 * self.font_size_scale)}px;")
+        self.coupling_label.setStyleSheet(f"font-size: {int(20 * self.font_size_scale)}px;")
+        self.pts_label.setStyleSheet(f"font-size: {int(20 * self.font_size_scale)}px;")
+        self._20M_label.setStyleSheet(f"font-size: {int(20 * self.font_size_scale)}px;")
+        self.time_scale_label.setStyleSheet(f"font-size: {int(20 * self.font_size_scale)}px;")
+        self.voltage_scale_label.setStyleSheet(f"font-size: {int(20 * self.font_size_scale)}px;")
+        self.closed_label.setStyleSheet(f"font-size: {int(30 * self.font_size_scale)}px;")
+        self.save_button.setStyleSheet(f"font-size: {int(20 * self.font_size_scale)}px;")
+        self.Auto_button.setStyleSheet(f"font-size: {int(25 * self.font_size_scale)}px;")
+        self.run_stop_button.setStyleSheet(f"QPushButton {{background-color: green; font-size: {int(20 * self.font_size_scale)}px;}}")
+        self.filter_button.setStyleSheet(f"QPushButton {{background-color: red; font-size: {int(20 * self.font_size_scale)}px;}}")
+        self.fft_button.setStyleSheet(f"font-size: {int(20 * self.font_size_scale)}px;")
+        self.channel_selector.setStyleSheet(f"font-size: {int(25 * self.font_size_scale)}px;")
+        self.close_channel_button.setStyleSheet(f"font-size: {int(20 * self.font_size_scale)}px;")
+        self.open_channel_button.setStyleSheet(f"font-size: {int(20 * self.font_size_scale)}px;")
+        self.coupling_selector.setStyleSheet(f"font-size: {int(25 * self.font_size_scale)}px;")
+        self.pts_selector.setStyleSheet(f"font-size: {int(25 * self.font_size_scale)}px;")
+        self.toggle_button.setStyleSheet(f"QPushButton {{font-size: {int(20 * self.font_size_scale)}px; background-color: red;}}")
+        self.time_scale_selector.setStyleSheet(f"font-size: {int(25 * self.font_size_scale)}px;")
+        self.voltage_scale_selector.setStyleSheet(f"font-size: {int(25 * self.font_size_scale)}px;")
+        self.vpp_label.setStyleSheet(f"font-size: {int(25 * self.font_size_scale)}px;")
+        self.frequency_label.setStyleSheet(f"font-size: {int(25 * self.font_size_scale)}px;")
+        self.Quit_button.setStyleSheet(f"font-size: {int(20 * self.font_size_scale)}px;")
 
     def center(self):#使UI置于屏幕中央
         qr = self.frameGeometry()
@@ -886,19 +886,19 @@ class OscilloscopeApp(QMainWindow):
         if self.voltage_scale >= 1:
             return f'{x:.2f}V'
         elif self.voltage_scale >= 0.001 and self.voltage_scale <= 1:
-            return f'{x * 1000:.4f}mV'
+            return f'{x * 1000:.2f}mV'
         else:
-            return f'{x * 1e6:.4f}μV'
+            return f'{x * 1e6:.2f}μV'
         
     def time_formatter(self, x, pos):#x轴坐标格式设置
         if self.time_scale >= 1:
             return f'{x:.2f}s'
         elif self.time_scale >= 0.001 and self.time_scale <= 1:
-            return f'{x * 1000:.4f}ms'
+            return f'{x * 1000:.2f}ms'
         elif self.time_scale >= 1e-6 and self.time_scale <= 1e-3:
-            return f'{x * 1e6:.4f}μs'
+            return f'{x * 1e6:.2f}μs'
         else:
-            return f'{x * 1e9:.4f}ns'
+            return f'{x * 1e9:.2f}ns'
         
     def convert_frequency(self,freq):#频率格式转换
         if freq < 1e3:
@@ -933,25 +933,26 @@ class OscilloscopeApp(QMainWindow):
                 self.ax.clear()
                 if self.filter_lp:
                     self.lpfilter(time_axis)
-                    self.ax.set_title(f'示波器波形(经过Wc为{self.convert_frequency(self.filter_w1)}的低通滤波器)', fontsize=30)
+                    self.ax.set_title(f'示波器波形(经过Wc为{self.convert_frequency(self.filter_w1)}的低通滤波器)', fontsize=int(15*self.font_size_scale))
                 elif self.filter_hp:
                     self.hpfilter(time_axis)
-                    self.ax.set_title(f'示波器波形(经过Wc为{self.convert_frequency(self.filter_w1)}的高通滤波器)', fontsize=30)
+                    self.ax.set_title(f'示波器波形(经过Wc为{self.convert_frequency(self.filter_w1)}的高通滤波器)', fontsize=int(15*self.font_size_scale))
                 elif self.filter_bp:
                     self.bpfilter(time_axis)
-                    self.ax.set_title(f'示波器波形(经过W1为{self.convert_frequency(self.filter_w1)},W2为{self.convert_frequency(self.filter_w2)}的带通滤波器)', fontsize=30)
+                    self.ax.set_title(f'示波器波形(经过W1为{self.convert_frequency(self.filter_w1)},W2为{self.convert_frequency(self.filter_w2)}的带通滤波器)', fontsize=int(15*self.font_size_scale))
                 elif self.filter_bs:
                     self.bsfilter(time_axis)
-                    self.ax.set_title(f'示波器波形(经过W1为{self.convert_frequency(self.filter_w1)},W2为{self.convert_frequency(self.filter_w2)}的带阻滤波器)', fontsize=30)
+                    self.ax.set_title(f'示波器波形(经过W1为{self.convert_frequency(self.filter_w1)},W2为{self.convert_frequency(self.filter_w2)}的带阻滤波器)', fontsize=int(15*self.font_size_scale))
                 elif not self.filter_lp and not self.filter_hp and not self.filter_bp and not self.filter_bs:
                     self.ax.plot(time_axis, self.data)
-                    self.ax.set_title('示波器波形', fontsize=36)
+                    self.ax.set_title('示波器波形', fontsize=int(18*self.font_size_scale))
                 else:
                     pass
-                self.ax.tick_params(axis='both', which='major', labelsize=22)
-                self.ax.tick_params(axis='both', which='minor', labelsize=10)
-                self.ax.set_xlabel('时间', fontsize=30)
-                self.ax.set_ylabel('电压', fontsize=30)
+                
+                self.ax.tick_params(axis='both', which='major', labelsize=int(12*self.font_size_scale))
+                self.ax.tick_params(axis='both', which='minor', labelsize=int(5*self.font_size_scale))
+                self.ax.set_xlabel('时间', fontsize=int(15*self.font_size_scale))
+                self.ax.set_ylabel('电压', fontsize=int(15*self.font_size_scale))
                 #self.ax.xaxis.set_major_locator(MultipleLocator(2*time_per_division))
                 #self.ax.yaxis.set_major_locator(MultipleLocator(voltage_per_division))
                 self.ax.yaxis.set_major_formatter(FuncFormatter(self.voltage_formatter))
