@@ -15,6 +15,7 @@ from tkinter import Tk,filedialog
 from pandas import DataFrame
 from os import path
 from gc import collect
+
 #采用from ... import ... 方式,可减小exe的大小
 
 #Python可以非常好的模块化,但是我这坏习惯改不了总是喜欢一次在一个文件里全写完,以前C++,C还有头文件和源文件,现在python一个文件就写完了
@@ -286,8 +287,8 @@ class OscilloscopeApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.rm = ResourceManager()
-        self.prompt_for_device_address()
         self.simulate = False
+        self.prompt_for_device_address()
         self.simulation_time = 0 
         self.update_time=500 #波形更新时间(ms)
         self.update_time_simulate=1000 #模拟模式下波形更新时间(ms)
@@ -339,7 +340,10 @@ class OscilloscopeApp(QMainWindow):
     def initUI(self):#初始化UI
         self.setWindowIcon(QIcon(resource_path("OIG3.jpg")))
         self.setWindowTitle('示波器波形显示软件')
-        self.resize(1920, 1080)
+        self.resize(1280, 720)
+        #self.setMaximumSize(2560, 1440)
+        self.original_width = 1280
+        self.original_height = 720
 
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
@@ -351,111 +355,88 @@ class OscilloscopeApp(QMainWindow):
         self.main_layout.addLayout(self.left_panel)
 
         self.closed_label = QLabel('通道已关闭')
-        self.closed_label.setStyleSheet("font-size: 50px;")
         self.closed_label.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.left_panel.addWidget(self.closed_label)
         self.closed_label.hide()
 
         self.save_button = QPushButton('保存当前波形(CSV)')
-        self.save_button.setStyleSheet("font-size: 35px;")
         self.save_button.clicked.connect(self.save)
         self.left_panel.addWidget(self.save_button)
         self.save_button.setDisabled(True)
 
         self.Auto_button = QPushButton('Autoset')
-        self.Auto_button.setStyleSheet("font-size: 40px;")
         self.Auto_button.clicked.connect(self.autoset)
         self.left_panel.addWidget(self.Auto_button)
 
         self.run_stop_button = QPushButton('Stop')
-        self.run_stop_button.setStyleSheet("QPushButton {background-color: green;font-size: 35px;}")
         self.run_stop_button.clicked.connect(self.run_stop)
         self.left_panel.addWidget(self.run_stop_button)
 
         self.filter_button = QPushButton('软件滤波')
-        self.filter_button.setStyleSheet("QPushButton {background-color: red;font-size: 35px;}")
         self.filter_button.clicked.connect(self.filter_software)
         self.left_panel.addWidget(self.filter_button)
 
         self.fft_button = QPushButton('软件FFT')
-        self.fft_button.setStyleSheet("font-size: 35px")
         self.fft_button.clicked.connect(self.FFT_software)
         self.left_panel.addWidget(self.fft_button)
 
-        channel_label = QLabel('通道:')
-        channel_label.setStyleSheet("font-size: 35px;")
-        self.left_panel.addWidget(channel_label)
+        self.channel_label = QLabel('通道:')
+        self.left_panel.addWidget(self.channel_label)
         self.channel_selector = QComboBox()
         self.channel_selector.addItems(['CHANnel1', 'CHANnel2', 'CHANnel3', 'CHANnel4'])
         self.channel_selector.currentTextChanged.connect(self.change_channel)
-        self.channel_selector.setStyleSheet("font-size: 40px;")
         self.left_panel.addWidget(self.channel_selector)
 
         self.close_channel_button = QPushButton('关闭通道')
-        self.close_channel_button.setStyleSheet("font-size: 35px;")
         self.close_channel_button.clicked.connect(self.close_channel)
         self.left_panel.addWidget(self.close_channel_button)
 
         self.open_channel_button = QPushButton('打开通道')
-        self.open_channel_button.setStyleSheet("font-size: 35px;")
         self.open_channel_button.clicked.connect(self.open_channal)
         self.left_panel.addWidget(self.open_channel_button)
 
-        coupling_label = QLabel('耦合方式:')
-        coupling_label.setStyleSheet("font-size: 35px;")
-        self.left_panel.addWidget(coupling_label)
+        self.coupling_label = QLabel('耦合方式:')
+        self.left_panel.addWidget(self.coupling_label)
         self.coupling_selector = QComboBox()
         self.coupling_selector.addItems(['AC', 'DC', 'GND'])
         self.coupling_selector.currentTextChanged.connect(self.change_coupling)
-        self.coupling_selector.setStyleSheet("font-size: 40px;")
         self.left_panel.addWidget(self.coupling_selector)
 
-        pts_label = QLabel('存储深度:')
-        pts_label.setStyleSheet("font-size: 35px;")
-        self.left_panel.addWidget(pts_label)
+        self.pts_label = QLabel('存储深度:')
+        self.left_panel.addWidget(self.pts_label)
         self.pts_selector = QComboBox()
         self.pts_selector.addItems(['AUTO','1k','10k','100k','1M','10M','25M','50M'])
         self.pts_selector.currentTextChanged.connect(self.change_pts)
-        self.pts_selector.setStyleSheet("font-size: 40px;")
         self.left_panel.addWidget(self.pts_selector)
 
-        _20M_label = QLabel('20M限制:')
-        _20M_label.setStyleSheet("font-size: 35px;")
-        self.left_panel.addWidget(_20M_label)
+        self._20M_label = QLabel('20M限制:')
+        self.left_panel.addWidget(self._20M_label)
         self.toggle_button = _20MButton("OFF")
-        self.toggle_button.setStyleSheet("QPushButton {font-size: 35px;background-color: red;}")
         self.toggle_button.clicked.connect(self._20_M_control)
         self.left_panel.addWidget(self.toggle_button)
 
-        time_scale_label = QLabel('时间刻度:')
-        time_scale_label.setStyleSheet("font-size: 35px;")
-        self.left_panel.addWidget(time_scale_label)
+        self.time_scale_label = QLabel('时间刻度:')
+        self.left_panel.addWidget(self.time_scale_label)
         self.time_scale_selector = QComboBox()
         self.time_scale_selector.addItems(['2ns', '5ns', '10ns','20ns', '50ns', '100ns', '200ns', '500ns', '1μs', '2μs', '5μs', '10μs','20μs','50μs', '100μs', '200μs', '500μs', '1ms', '2ms', '5ms', '10ms','20ms','50ms', '100ms', '200ms', '500ms', '1s', '2s', '5s', '10s','20s','50s', '100s', '200s', '500s'])
         self.time_scale_selector.currentTextChanged.connect(self.update_time_scale)
-        self.time_scale_selector.setStyleSheet("font-size: 40px;")
         self.left_panel.addWidget(self.time_scale_selector)
 
-        voltage_scale_label = QLabel('电压刻度:')
-        voltage_scale_label.setStyleSheet("font-size: 35px;")
-        self.left_panel.addWidget(voltage_scale_label)
+        self.voltage_scale_label = QLabel('电压刻度:')
+        self.left_panel.addWidget(self.voltage_scale_label)
 
         self.voltage_scale_selector = QComboBox()
         self.voltage_scale_selector.addItems(['200μv', '500μv', '1mv', '2mv', '5mv', '10mv', '20mv', '50mv', '100mv', '200mv', '500mv', '1v', '2v', '5v', '10v'])
         self.voltage_scale_selector.currentTextChanged.connect(self.update_voltage_scale)
-        self.voltage_scale_selector.setStyleSheet("font-size: 40px;")
         self.left_panel.addWidget(self.voltage_scale_selector)
 
         self.vpp_label = QLabel('峰峰值: N/A')
-        self.vpp_label.setStyleSheet("font-size: 40px;")
         self.left_panel.addWidget(self.vpp_label)
 
         self.frequency_label = QLabel('频率: N/A')
-        self.frequency_label.setStyleSheet("font-size: 40px;")
         self.left_panel.addWidget(self.frequency_label)
 
         self.Quit_button = QPushButton('退出')
-        self.Quit_button.setStyleSheet("font-size: 35px;")
         self.Quit_button.clicked.connect(self.close)
         self.left_panel.addWidget(self.Quit_button)
 
@@ -468,6 +449,42 @@ class OscilloscopeApp(QMainWindow):
         self.lef_mouse_pressed = False  # 鼠标左键是否按下
         self.center()
         self.show()
+
+        # 初始化窗口大小
+        self.update_stylesheets()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.update_stylesheets()
+
+    def update_stylesheets(self):
+        scale_w = min(float(self.width() / self.original_width),1.65)
+        scale_h = min(float(self.height() / self.original_height),1.60)
+        font_size_scale = min(scale_w,scale_h)
+
+        self.channel_label.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
+        self.coupling_label.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
+        self.pts_label.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
+        self._20M_label.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
+        self.time_scale_label.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
+        self.voltage_scale_label.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
+        self.closed_label.setStyleSheet(f"font-size: {int(30 * font_size_scale)}px;")
+        self.save_button.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
+        self.Auto_button.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
+        self.run_stop_button.setStyleSheet(f"QPushButton {{background-color: green; font-size: {int(20 * font_size_scale)}px;}}")
+        self.filter_button.setStyleSheet(f"QPushButton {{background-color: red; font-size: {int(20 * font_size_scale)}px;}}")
+        self.fft_button.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
+        self.channel_selector.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
+        self.close_channel_button.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
+        self.open_channel_button.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
+        self.coupling_selector.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
+        self.pts_selector.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
+        self.toggle_button.setStyleSheet(f"QPushButton {{font-size: {int(20 * font_size_scale)}px; background-color: red;}}")
+        self.time_scale_selector.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
+        self.voltage_scale_selector.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
+        self.vpp_label.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
+        self.frequency_label.setStyleSheet(f"font-size: {int(25 * font_size_scale)}px;")
+        self.Quit_button.setStyleSheet(f"font-size: {int(20 * font_size_scale)}px;")
 
     def center(self):#使UI置于屏幕中央
         qr = self.frameGeometry()
