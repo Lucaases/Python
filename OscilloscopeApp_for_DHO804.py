@@ -287,7 +287,7 @@ class OscilloscopeApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.rm = ResourceManager()
-        self.simulate = False
+        self.simulate = False #模拟模式标记
         self.prompt_for_device_address()
         self.simulation_time = 0 
         self.update_time=500 #波形更新时间(ms)
@@ -341,7 +341,6 @@ class OscilloscopeApp(QMainWindow):
         self.setWindowIcon(QIcon(resource_path("OIG3.jpg")))
         self.setWindowTitle('示波器波形显示软件')
         self.resize(1280, 720)
-        #self.setMaximumSize(2560, 1440)
         self.original_width = 1280
         self.original_height = 720
 
@@ -453,11 +452,11 @@ class OscilloscopeApp(QMainWindow):
         # 初始化窗口大小
         self.update_stylesheets()
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event):#重写resizeEvent,使UI自适应
         super().resizeEvent(event)
         self.update_stylesheets()
 
-    def update_stylesheets(self):
+    def update_stylesheets(self):#根据窗口大小更新UI字体大小
         scale_w = min(float(self.width() / self.original_width),1.65)
         scale_h = min(float(self.height() / self.original_height),1.60)
         font_size_scale = min(scale_w,scale_h)
