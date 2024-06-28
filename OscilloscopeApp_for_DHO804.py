@@ -595,7 +595,7 @@ class OscilloscopeApp(QMainWindow):
             if devices:
                 result = inputdialog.exec()
                 device_address = inputdialog.get_selected_device()
-                pattern = compile(r'^USB\d+::0x[0-9A-Fa-f]{4}::0x[0-9A-Fa-f]{4}::DHO9[A-Z0-9]+::INSTR$')
+                pattern = compile(r'^USB\d+::0x[0-9A-Fa-f]{4}::0x[0-9A-Fa-f]{4}::DHO9[A-Z0-9]+::INSTR$')#只匹配DHO804系列示波器,防止连接其他VISA设备(如信号发生器)导致未知错误
                 if result == QDialog.DialogCode.Accepted and pattern.fullmatch(device_address) is not None:
                     self.connect_to_oscilloscope(device_address)
                 elif result == QDialog.DialogCode.Accepted and device_address == 'TEST(模拟模式,纯看界面)':
